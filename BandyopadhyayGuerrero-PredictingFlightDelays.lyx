@@ -25,9 +25,10 @@
 \bibtex_command default
 \index_command default
 \paperfontsize default
+\spacing single
 \use_hyperref false
 \papersize default
-\use_geometry false
+\use_geometry true
 \use_amsmath 1
 \use_esint 1
 \use_mhchem 1
@@ -42,6 +43,10 @@
 \shortcut idx
 \color #008000
 \end_index
+\leftmargin 3cm
+\topmargin 3cm
+\rightmargin 2cm
+\bottommargin 3cm
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
@@ -55,12 +60,13 @@
 \html_math_output 0
 \html_css_as_file 0
 \html_be_strict false
+\author 534349327 "Raj Bandyopadhyay" 
 \end_header
 
 \begin_body
 
 \begin_layout Title
-CS229 Project Milestone
+Predicting airline delays
 \end_layout
 
 \begin_layout Author
@@ -68,29 +74,46 @@ Raj Bandyopadhyay, Rafael Guerrero
 \end_layout
 
 \begin_layout Date
-11/18/2012 (2 late days each)
+12/14/2012
 \end_layout
 
-\begin_layout Section
+\begin_layout Section*
 Introduction
+\change_deleted 534349327 1355278790
+
 \end_layout
 
 \begin_layout Standard
-In this project, we use publicly available data to predict flight delays
- for a subset of commercial flights in the United States.
- Our goal is to accurately predict if there will be a delay, estimate the
- magnitude of the delay and investigate the factors affecting the delay.
+In this project, we use publicly available data from the Bureau of Transportatio
+n Statistics to analyse and predict flight departure delays for a subset
+ of commercial flights in the United States.
+ We have three goals in mind.
+ First, we would like to identify some factors which are most likely to
+ cause flight delays.
+ Second, we want to predict if there will be a delay for an individual flight.
+ Finally, if there is a delay, we would to estimate its magnitude.
 \end_layout
 
-\begin_layout Section
+\begin_layout Standard
+In this paper, we first describe the important features of the data, along
+ with our preliminary pre-processing and analysis.
+ As part of this step, we use linear regression to identify the most important
+ factors affecting delays.
+ Subsequently, we use a classifier (SVM) to predict if there will be a delay.
+ For estimating the magnitude of delays, we use a non-parametric regression
+ algorithm.
+ 
+\end_layout
+
+\begin_layout Section*
 The airline delay data set
 \end_layout
 
 \begin_layout Standard
 The original data set contains information for all commercial flights in
  the US from 1987 to 2008.
- Since the data set is extremely large we extracted a reasonable subset
- of the data as follows:
+ Since the data set is extremely large (several million records) we extracted
+ a reasonable subset of the data as follows:
 \end_layout
 
 \begin_layout Itemize
@@ -98,57 +121,41 @@ Two years: 2007 and 2008
 \end_layout
 
 \begin_layout Itemize
-Five major points of origin: ATL (Atlanta), EWR (Newark), IAH (Houston),
- LAX (Los Angeles) and ORD (Chicago)
+One airport of origin: O'Hare (Chicago), since it is one of the busiest
+ airports and is exposed to a wide range of weather conditions
+\end_layout
+
+\begin_layout Itemize
+One airline: AA (American Airlines), since it is the largest airline using
+ the O'Hare airport
 \end_layout
 
 \begin_layout Standard
-In addition, we used secondary data sources to enrich our data set with
- information about airplanes and historical weather statistics.
- At the end of all the preprocessing steps, we were left with a sample size
- of about 2.5 million records containing the features described next.
+This reduces the size of our data set to around 75,000 records.
+ For each record, we use secondary data sources to enrich it with information
+ about airplanes and historical weather statistics.
+ At the end of the pre-processing steps, our data set has the following
+ features:
 \end_layout
 
-\begin_layout Subsection*
-Description of features
-\end_layout
-
-\begin_layout Standard
-Using simple histograms and other basic plots, we eliminated several features
- that had only one value or did not affect delays at all.
- The remaining features can be roughly divided into the following three
- groups.
-\end_layout
-
-\begin_layout Paragraph*
-Flight features
-\end_layout
-
-\begin_layout Standard
-These includes features such as the year, month, date, and hour of departure,
- the origin and destination airport codes, the airline code, flight number
- and the distance covered by the flight.
- Except for the distance, all other variables are converted to categorical
+\begin_layout Itemize
+Flight features: These include the times of departure and arrival, the origin
+ and destination airports, the airline, and the distance covered by the
+ flight.
+ Except for the distance, we convert all other variables to categorical
  form.
 \end_layout
 
-\begin_layout Paragraph*
-Airplane features
+\begin_layout Itemize
+Airplane features: These include the make and model of the plane, its age
+ and engine type 
 \end_layout
 
-\begin_layout Standard
-The only airplane feature of significance is the manufacturer.
-\end_layout
-
-\begin_layout Paragraph*
-Weather features
-\end_layout
-
-\begin_layout Standard
-We use the Weather Underground API to obtain historical weather information
- for the time closest to the departure time.
- The weather data includes several features indicating the presence off
- snow, hail, thunder, rain and tornado warnings.
+\begin_layout Itemize
+Weather features: We use the Weather Underground API to obtain historical
+ weather information for the time closest to the departure time.
+ The weather data includes several categorical features indicating the presence
+ of snow, hail, thunder, rain and tornado warnings.
  In addition it also contains a few numeric features such as wind speed,
  temperature and humidity.
 \end_layout
