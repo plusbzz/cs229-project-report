@@ -1,0 +1,1022 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+CS229 Project Milestone
+\end_layout
+
+\begin_layout Author
+Raj Bandyopadhyay, Rafael Guerrero
+\end_layout
+
+\begin_layout Date
+11/18/2012 (2 late days each)
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+In this project, we use publicly available data to predict flight delays
+ for a subset of commercial flights in the United States.
+ Our goal is to accurately predict if there will be a delay, estimate the
+ magnitude of the delay and investigate the factors affecting the delay.
+\end_layout
+
+\begin_layout Section
+The airline delay data set
+\end_layout
+
+\begin_layout Standard
+The original data set contains information for all commercial flights in
+ the US from 1987 to 2008.
+ Since the data set is extremely large we extracted a reasonable subset
+ of the data as follows:
+\end_layout
+
+\begin_layout Itemize
+Two years: 2007 and 2008
+\end_layout
+
+\begin_layout Itemize
+Five major points of origin: ATL (Atlanta), EWR (Newark), IAH (Houston),
+ LAX (Los Angeles) and ORD (Chicago)
+\end_layout
+
+\begin_layout Standard
+In addition, we used secondary data sources to enrich our data set with
+ information about airplanes and historical weather statistics.
+ At the end of all the preprocessing steps, we were left with a sample size
+ of about 2.5 million records containing the features described next.
+\end_layout
+
+\begin_layout Subsection*
+Description of features
+\end_layout
+
+\begin_layout Standard
+Using simple histograms and other basic plots, we eliminated several features
+ that had only one value or did not affect delays at all.
+ The remaining features can be roughly divided into the following three
+ groups.
+\end_layout
+
+\begin_layout Paragraph*
+Flight features
+\end_layout
+
+\begin_layout Standard
+These includes features such as the year, month, date, and hour of departure,
+ the origin and destination airport codes, the airline code, flight number
+ and the distance covered by the flight.
+ Except for the distance, all other variables are converted to categorical
+ form.
+\end_layout
+
+\begin_layout Paragraph*
+Airplane features
+\end_layout
+
+\begin_layout Standard
+The only airplane feature of significance is the manufacturer.
+\end_layout
+
+\begin_layout Paragraph*
+Weather features
+\end_layout
+
+\begin_layout Standard
+We use the Weather Underground API to obtain historical weather information
+ for the time closest to the departure time.
+ The weather data includes several features indicating the presence off
+ snow, hail, thunder, rain and tornado warnings.
+ In addition it also contains a few numeric features such as wind speed,
+ temperature and humidity.
+\end_layout
+
+\begin_layout Subsection*
+Training and testing data
+\end_layout
+
+\begin_layout Standard
+In the experiments presented in the rest of this paper, we used a subset
+ of 9 predictor variables.
+ On expanding out the categorical variables, this translates to a feature
+ dimensionality of 57.
+ For training, we used a subset with 100,000 randomly sampled records.
+ We used a different subset of 100,000 randomly sampled records for testing.
+ From the learning theory covered in class, the sample size should be more
+ than enough for the dimensionality of the feature set.
+\end_layout
+
+\begin_layout Section
+Classification approach
+\end_layout
+
+\begin_layout Standard
+Our first approach treats the problem as binary classification.
+ Since airlines don't count short delays, we label a flight as "Class 1"
+ if the delay is 20 minutes or below i.e the flight is on time, and "Class
+ 0" otherwise.
+ We then apply several classifier algorithms to predict this binary classificati
+on.
+ Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Summary-of-results"
+
+\end_inset
+
+ shows the results of these classifiers for on-time flights.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Summary-of-results"
+
+\end_inset
+
+Summary of results using different classifiers (in %) for on-time flights
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Accuracy
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Precision
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Recall
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+F-Score
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Naive Bayes
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+80.7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+81.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+99.4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.893
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Logistic Regression
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+80.9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+81.4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+99
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.893
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Random Forests
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+81.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+81.6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+99.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.895
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear SVM (on smaller set)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+83.9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+83.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+99.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.91
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Summary-of-results-1"
+
+\end_inset
+
+Summary of results using different classifiers (in %) for delayed flights
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Accuracy
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Precision
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Recall
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+F-Score
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Naive Bayes
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+80.7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+58.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3.6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.067
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Logistic Regression
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+80.9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+59.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5.9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Random Forests
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+81.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+66.5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6.8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.895
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear SVM (on smaller set)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+83.9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+97.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+21.6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.123
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Preliminary Observations and Insights
+\end_layout
+
+\begin_layout Enumerate
+Our data set is somewhat skewed: 81% of flights are on-time while 19% are
+ delayed.
+\end_layout
+
+\begin_layout Enumerate
+Naive Bayes training is orders of magnitude faster than Logistic Regression,
+ Random forests and SVM when using full feature set.
+ 
+\end_layout
+
+\begin_layout Enumerate
+On training an SVM with a much smaller set (i.e 2500 training samples, 3
+ features) we get faster training times comparable to Naive Bayes.
+ 
+\end_layout
+
+\begin_layout Enumerate
+All of these algorithms struggle to generalize their predictions.
+ Specifically, they are good at predicting on-time flights, but are bad
+ at predicting delays, as shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Summary-of-results-1"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Regression approach
+\end_layout
+
+\begin_layout Standard
+Our second approach treats the problem as a regression.
+ We first try a simple linear regression.
+ The regression performs quite poorly both on the training and test sets.
+ In both cases, the mean error is about 35 seconds.
+ 
+\end_layout
+
+\begin_layout Standard
+In order to investigate further, we plot the predicted delays vs the actual
+ delays for the test set.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Predicted-vs.-Actual"
+
+\end_inset
+
+Predicted vs.
+ Actual Departure Delays in seconds
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename PredActualDelays.png
+	width 80text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Predicted-vs.-Actual"
+
+\end_inset
+
+ clearly shows that the errors are quite severe for smaller delays i.e.
+ for flights with delay 0, the linear regression predicts a delay ranging
+ from -25 to +70 seconds! Furthermore, the predicted delays are not normally
+ distributed around 0.
+ 
+\end_layout
+
+\begin_layout Standard
+In order to verify the normality assumption for linear regression, we plotted
+ the histogram of response variable (i.e.
+ the delay) by fixing several different values of predictors.
+ This gives us an idea of the conditional distribution 
+\begin_inset Formula $P(Y|X)$
+\end_inset
+
+ for different combinations of 
+\begin_inset Formula $X$
+\end_inset
+
+.
+ For example, the Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Distribution-of-departure"
+
+\end_inset
+
+ shows us the distribution of departure delays for our training set.
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Distribution-of-departure"
+
+\end_inset
+
+Distribution of departure delays for 100,000 flights
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename DepDelayHist.png
+	width 80text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We see that the distribution is not normal (and this fact holds even when
+ we hold several predictor variables fixed at a time).
+ The shape of the distribution is probably best modeled by an exponential
+ or a gamma distribution, which are commonly used to model delays.
+ However, those two distributions are not defined for 
+\begin_inset Formula $x<0$
+\end_inset
+
+, so we may have to be creative in using them.
+\end_layout
+
+\begin_layout Section
+Discussion and next steps
+\end_layout
+
+\begin_layout Standard
+So far, our attempts at predicting flight delays accurately have not yielded
+ spectacular results, but it has provided us with some insight into our
+ data set.
+ Based on these insights, we plan to try several different approaches.
+\end_layout
+
+\begin_layout Paragraph*
+Generalized Linear Models
+\end_layout
+
+\begin_layout Standard
+As Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Distribution-of-departure"
+
+\end_inset
+
+ shows, the normality assumption is not met by the response variable.
+ This leads us to consider a GLM with a non-normal distribution, such as
+ an exponential or Gamma distribution (treating delays as continuous).
+ We could also discretize the delays and try a regression based on the Poisson
+ or Geometric distribution.
+\end_layout
+
+\begin_layout Standard
+There are two specific questions we will attempt to answer (feedback is
+ very welcome!):
+\end_layout
+
+\begin_layout Enumerate
+Which distribution would best model 
+\begin_inset Formula $P(Y|X)$
+\end_inset
+
+? The distribution is 'centered' around 0 in terms of median and mode, and
+ also has a fat tail.
+ 
+\end_layout
+
+\begin_layout Enumerate
+One complicating factor is that our delays take on some values that are
+ negative, while none of the distributions mentioned above are defined over
+ negative values.
+ Can we transform the response variable into positive values for purposes
+ of the regression?
+\end_layout
+
+\begin_layout Paragraph*
+More sophisticated classification algorithms
+\end_layout
+
+\begin_layout Standard
+Our classification approach yielded poor generalization, but more sophisticated
+ algorithms such as a Bayesian Network or SVMs with non-linear kernels may
+ provide better results.
+\end_layout
+
+\begin_layout Paragraph*
+Better feature selection
+\end_layout
+
+\begin_layout Standard
+Since both our training and test errors are high, we conclude that we have
+ an underfitting problem.
+ We propose to spend some time coming up with better diagnostics and investigati
+ng better feature selection techniques, such as forward and backward search.
+\end_layout
+
+\end_body
+\end_document
