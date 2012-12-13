@@ -188,6 +188,44 @@ analyse how the prediction error changed with the size of the training set
 Features affecting delays
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Linear regression coefficients for selected features
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename coefficients.png
+	display false
+	width 85text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection*
 Influence of training set size
 \end_layout
@@ -268,6 +306,54 @@ Why does linear regression perform so poorly? In order to investigate this
  
 \end_layout
 
+\begin_layout Standard
+Our first thought is to use a GLM to model the delay distribution.
+ The GLM is based on a gamma distribution, whose shape is close to the actual
+ delay distribution.
+ In order to get this to work, we add a positive number to the delay, since
+ the gamma distribution is only defined for non-negative numbers.
+ However, even with a GLM (as implemented in R), our prediction error (as
+ defined by the RMS residual value, does not improve much.
+\end_layout
+
+\begin_layout Standard
+Our next approach is to use a non-parametric regression model.
+ The idea for using non-parametric techniques is based on some observations:
+\end_layout
+
+\begin_layout Enumerate
+We need a way to model the skewness of the distribution
+\end_layout
+
+\begin_layout Enumerate
+Small training sets do as well as large ones
+\end_layout
+
+\begin_layout Enumerate
+In real life, airplane delays often occur in 'clumps' i.e.
+ flights get delayed around the same time.
+ This is borne out by some simple time series plots.
+ Can we use this fact to our benefit?
+\end_layout
+
+\begin_layout Standard
+A non-parametric regression would help meet these requirements.
+ Since we have several features in our data set involving flight departure
+ time (month, day, hour), flights closer in time to a given sample flight
+ are more influential on the prediction for that sample.
+ Also, the slow execution time of non-parametric regression can be mitigated,
+ in this case, by using a smaller training set without losing much in terms
+ of predictive power.
+\end_layout
+
+\begin_layout Standard
+Using a non-parametric regression implementation in R and cross-validation,
+ we train several models on randomly constructed sample data sets and evaluate
+ the best parameters for the model.
+ We find that a locally weighted quadratic regression gives us the best
+ results that we have attained so far.
+\end_layout
+
 \begin_layout Section*
 Exploring Random Forests
 \end_layout
@@ -276,5 +362,27 @@ Exploring Random Forests
 Discussion
 \end_layout
 
+\begin_layout Itemize
+bottleneck issue
+\end_layout
+
+\begin_layout Itemize
+what we'd have done differently/anew
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Density estimation model
+\end_layout
+
+\begin_layout Itemize
+Use baseline + estimate deviations
+\end_layout
+
+\begin_layout Itemize
+EM to estimate parameters
+\end_layout
+
+\end_deeper
 \end_body
 \end_document
