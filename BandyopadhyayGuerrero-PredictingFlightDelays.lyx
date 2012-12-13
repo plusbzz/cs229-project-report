@@ -91,7 +91,7 @@ n Statistics to analyse and predict flight departure delays for a subset
  First, we would like to identify some factors which are most likely to
  cause flight delays.
  Second, we want to predict if there will be a delay for an individual flight.
- Finally, if there is a delay, we would to estimate its magnitude.
+ Finally, if there is a delay, we would like to estimate its magnitude.
 \end_layout
 
 \begin_layout Standard
@@ -100,8 +100,8 @@ In this paper, we first describe the important features of the data, along
  As part of this step, we use linear regression to identify the most important
  factors affecting delays.
  Subsequently, we use a classifier (SVM) to predict if there will be a delay.
- For estimating the magnitude of delays, we use a non-parametric regression
- algorithm.
+ For estimating the magnitude of delays, we use a non-parametric quadratic
+ regression algorithm.
  
 \end_layout
 
@@ -139,9 +139,8 @@ This reduces the size of our data set to around 75,000 records.
 \end_layout
 
 \begin_layout Itemize
-Flight features: These include the times of departure and arrival, the origin
- and destination airports, the airline, and the distance covered by the
- flight.
+Flight features: These include the times of departure and arrival, the destinati
+on airport, and the distance covered by the flight.
  Except for the distance, we convert all other variables to categorical
  form.
 \end_layout
@@ -160,869 +159,121 @@ Weather features: We use the Weather Underground API to obtain historical
  temperature and humidity.
 \end_layout
 
-\begin_layout Subsection*
-Training and testing data
+\begin_layout Section*
+Preliminary analysis using Linear Regression
 \end_layout
 
 \begin_layout Standard
-In the experiments presented in the rest of this paper, we used a subset
- of 9 predictor variables.
- On expanding out the categorical variables, this translates to a feature
- dimensionality of 57.
- For training, we used a subset with 100,000 randomly sampled records.
- We used a different subset of 100,000 randomly sampled records for testing.
- From the learning theory covered in class, the sample size should be more
- than enough for the dimensionality of the feature set.
+As our first pre-processing step, we use histograms and basic plots to eliminate
+ some features that have no impact on the delays.
+ These included features such as the airplane manufacturer and temperature.
+ We then used linear regression (as implemented in R) as a quick-and-dirty
+ first technique to examine the data.
+ Our goal with linear regression was threefold: 
 \end_layout
 
-\begin_layout Section
-Classification approach
+\begin_layout Enumerate
+use the regression parameters to identify prominent factors affecting delays
 \end_layout
 
-\begin_layout Standard
-Our first approach treats the problem as binary classification.
- Since airlines don't count short delays, we label a flight as "Class 1"
- if the delay is 20 minutes or below i.e the flight is on time, and "Class
- 0" otherwise.
- We then apply several classifier algorithms to predict this binary classificati
-on.
- Table 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "tab:Summary-of-results"
-
-\end_inset
-
- shows the results of these classifiers for on-time flights.
+\begin_layout Enumerate
+get a baseline estimate of how accurately delays could be predicted
 \end_layout
 
-\begin_layout Standard
-\begin_inset Float table
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "tab:Summary-of-results"
-
-\end_inset
-
-Summary of results using different classifiers (in %) for on-time flights
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="5">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Accuracy
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Precision
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Recall
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-F-Score
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Naive Bayes
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-80.7
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-81.1
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-99.4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0.893
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Logistic Regression
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-80.9
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-81.4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-99
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0.893
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Random Forests
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-81.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-81.6
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-99.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0.895
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Linear SVM (on smaller set)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-83.9
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-83.3
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-99.8
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0.91
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float table
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "tab:Summary-of-results-1"
-
-\end_inset
-
-Summary of results using different classifiers (in %) for delayed flights
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="5">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Accuracy
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Precision
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Recall
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-F-Score
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Naive Bayes
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-80.7
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-58.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3.6
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0.067
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Logistic Regression
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-80.9
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-59.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5.9
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0.1
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Random Forests
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-81.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-66.5
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6.8
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0.895
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Linear SVM (on smaller set)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-83.9
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-97.2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-21.6
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0.123
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
+\begin_layout Enumerate
+analyse how the prediction error changed with the size of the training set
 \end_layout
 
 \begin_layout Subsection*
-Preliminary Observations and Insights
+Features affecting delays
 \end_layout
 
-\begin_layout Enumerate
-Our data set is somewhat skewed: 81% of flights are on-time while 19% are
- delayed.
+\begin_layout Subsection*
+Influence of training set size
 \end_layout
 
-\begin_layout Enumerate
-Naive Bayes training is orders of magnitude faster than Logistic Regression,
- Random forests and SVM when using full feature set.
+\begin_layout Standard
+In order to study the effect of training set size, we run cross-validated
+ linear regression on data sets ranging from 500 to 75,000 samples and measure
+ the root mean residual error.
+ The data sets are generated by randomly sampling the original data.
+ We find that beyond 2000 samples, this error remains practically the same
+ for all sample sizes.
+ This leads us to conclude that for a well-shuffled data set, the size of
+ the training set has little influence beyond a relatively small size of
+ 2000 points.
+\end_layout
+
+\begin_layout Section*
+Predicting delay with SVMs
+\end_layout
+
+\begin_layout Standard
+In order to predict whether a flight will be delayed or not, we model the
+ problem as a classification with two classes: 
+\emph on
+delayed
+\emph default
+ for flights with delays above 15 minutes, and 
+\emph on
+non-delayed
+\emph default
+ otherwise.
+ Using the Weka machine learning toolkit, we first applied a naive-bayes
+ algorithm with ten-fold cross-validation on the entire training set.
+ While extremely fast, the naive-bayes implementation (with Laplace smoothing)
+ performs extremely poorly.
+ We then use SVMs for classification, since it's known as the best out-of-the-bo
+x classification algorithm.
+\end_layout
+
+\begin_layout Standard
+In order to train SVMs we use a smaller training set of 2000 points.
+ There are two reasons for this decision: first, SVMs are much slower to
+ train than naive-bayes.
+ Second, our preliminary analysis with linear regression shows that a larger
+ training set does not add much information to the algorithm.
+ Therefore, we use this smaller training set to train the SVM with a gaussian
+ kernel.
+\end_layout
+
+\begin_layout Standard
+Our initial results are quite disappointing.
+ While the classifier does a fairly good job at identifying non-delayed
+ flights, it performs horribly on predicting delays i.e.
+ it has an extremely high false negative rate.
+ Our hypothesis is that the skewed class distribution, combined with the
+ closeness of points in the two classes is the culprit.
+\end_layout
+
+\begin_layout Standard
+In order to mitigate the effect of the skewed class distribution, we run
+ the SVMs again, but this time setting a 10:1 cost penalty for delays i.e.
+ predicting a false negative incurs 10 times the cost of a false positive.
+ This step improves our classification result significantly.
+\end_layout
+
+\begin_layout Section*
+Estimating delay magnitude with non-parametric regression
+\end_layout
+
+\begin_layout Standard
+Why does linear regression perform so poorly? In order to investigate this
+ question, we perform some experiments on a smaller training set (4500 samples)
+ and test set (1500) samples.
+ We first plot the distributions of the actual and predicted departure delays
+ and notice a very large discrepancy.
+ While the predicted delays look roughly normally distributed, the actual
+ delays are drawn from an extremely skewed distribution.
  
 \end_layout
 
-\begin_layout Enumerate
-On training an SVM with a much smaller set (i.e 2500 training samples, 3
- features) we get faster training times comparable to Naive Bayes.
- 
+\begin_layout Section*
+Exploring Random Forests
 \end_layout
 
-\begin_layout Enumerate
-All of these algorithms struggle to generalize their predictions.
- Specifically, they are good at predicting on-time flights, but are bad
- at predicting delays, as shown in Table 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "tab:Summary-of-results-1"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Section
-Regression approach
-\end_layout
-
-\begin_layout Standard
-Our second approach treats the problem as a regression.
- We first try a simple linear regression.
- The regression performs quite poorly both on the training and test sets.
- In both cases, the mean error is about 35 seconds.
- 
-\end_layout
-
-\begin_layout Standard
-In order to investigate further, we plot the predicted delays vs the actual
- delays for the test set.
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Predicted-vs.-Actual"
-
-\end_inset
-
-Predicted vs.
- Actual Departure Delays in seconds
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename PredActualDelays.png
-	width 80text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Predicted-vs.-Actual"
-
-\end_inset
-
- clearly shows that the errors are quite severe for smaller delays i.e.
- for flights with delay 0, the linear regression predicts a delay ranging
- from -25 to +70 seconds! Furthermore, the predicted delays are not normally
- distributed around 0.
- 
-\end_layout
-
-\begin_layout Standard
-In order to verify the normality assumption for linear regression, we plotted
- the histogram of response variable (i.e.
- the delay) by fixing several different values of predictors.
- This gives us an idea of the conditional distribution 
-\begin_inset Formula $P(Y|X)$
-\end_inset
-
- for different combinations of 
-\begin_inset Formula $X$
-\end_inset
-
-.
- For example, the Figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Distribution-of-departure"
-
-\end_inset
-
- shows us the distribution of departure delays for our training set.
- 
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Distribution-of-departure"
-
-\end_inset
-
-Distribution of departure delays for 100,000 flights
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename DepDelayHist.png
-	width 80text%
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We see that the distribution is not normal (and this fact holds even when
- we hold several predictor variables fixed at a time).
- The shape of the distribution is probably best modeled by an exponential
- or a gamma distribution, which are commonly used to model delays.
- However, those two distributions are not defined for 
-\begin_inset Formula $x<0$
-\end_inset
-
-, so we may have to be creative in using them.
-\end_layout
-
-\begin_layout Section
-Discussion and next steps
-\end_layout
-
-\begin_layout Standard
-So far, our attempts at predicting flight delays accurately have not yielded
- spectacular results, but it has provided us with some insight into our
- data set.
- Based on these insights, we plan to try several different approaches.
-\end_layout
-
-\begin_layout Paragraph*
-Generalized Linear Models
-\end_layout
-
-\begin_layout Standard
-As Figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Distribution-of-departure"
-
-\end_inset
-
- shows, the normality assumption is not met by the response variable.
- This leads us to consider a GLM with a non-normal distribution, such as
- an exponential or Gamma distribution (treating delays as continuous).
- We could also discretize the delays and try a regression based on the Poisson
- or Geometric distribution.
-\end_layout
-
-\begin_layout Standard
-There are two specific questions we will attempt to answer (feedback is
- very welcome!):
-\end_layout
-
-\begin_layout Enumerate
-Which distribution would best model 
-\begin_inset Formula $P(Y|X)$
-\end_inset
-
-? The distribution is 'centered' around 0 in terms of median and mode, and
- also has a fat tail.
- 
-\end_layout
-
-\begin_layout Enumerate
-One complicating factor is that our delays take on some values that are
- negative, while none of the distributions mentioned above are defined over
- negative values.
- Can we transform the response variable into positive values for purposes
- of the regression?
-\end_layout
-
-\begin_layout Paragraph*
-More sophisticated classification algorithms
-\end_layout
-
-\begin_layout Standard
-Our classification approach yielded poor generalization, but more sophisticated
- algorithms such as a Bayesian Network or SVMs with non-linear kernels may
- provide better results.
-\end_layout
-
-\begin_layout Paragraph*
-Better feature selection
-\end_layout
-
-\begin_layout Standard
-Since both our training and test errors are high, we conclude that we have
- an underfitting problem.
- We propose to spend some time coming up with better diagnostics and investigati
-ng better feature selection techniques, such as forward and backward search.
+\begin_layout Section*
+Discussion
 \end_layout
 
 \end_body
