@@ -84,9 +84,9 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-In this project, we use publicly available data from the Bureau of Transportatio
-n Statistics to analyse and predict flight departure delays for a subset
- of commercial flights in the United States.
+In this project, we use publicly available data originally from the Bureau
+ of Transportation Statistics to analyse and predict flight departure delays
+ for a subset of commercial flights in the United States.
  We have three goals in mind.
  First, we would like to identify some factors which are most likely to
  cause flight delays.
@@ -110,8 +110,15 @@ The airline delay data set
 \end_layout
 
 \begin_layout Standard
-The original data set contains information for all commercial flights in
- the US from 1987 to 2008.
+The original data set 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "dataset"
+
+\end_inset
+
+ contains information for all commercial flights in the US from 1987 to
+ 2008.
  Since the data set is extremely large (several million records) we extracted
  a reasonable subset of the data as follows:
 \end_layout
@@ -151,8 +158,15 @@ Airplane features: These include the make and model of the plane, its age
 \end_layout
 
 \begin_layout Itemize
-Weather features: We use the Weather Underground API to obtain historical
- weather information for the time closest to the departure time.
+Weather features: We use the Weather Underground API 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wuapi"
+
+\end_inset
+
+ to obtain historical weather information for the time closest to the departure
+ time.
  The weather data includes several categorical features indicating the presence
  of snow, hail, thunder, rain and tornado warnings.
  In addition it also contains a few numeric features such as wind speed,
@@ -167,8 +181,14 @@ Preliminary analysis using Linear Regression
 As our first pre-processing step, we use histograms and basic plots to eliminate
  some features that have no impact on the delays.
  These included features such as the airplane manufacturer and temperature.
- We then used linear regression (as implemented in R) as a quick-and-dirty
- first technique to examine the data.
+ We then used linear regression (as implemented in R 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rlang"
+
+\end_inset
+
+) as a quick-and-dirty first technique to examine the data.
  Our goal with linear regression was threefold: 
 \end_layout
 
@@ -210,7 +230,7 @@ Linear regression coefficients for selected features
 \begin_inset Graphics
 	filename coefficients.png
 	display false
-	width 85text%
+	width 90text%
 
 \end_inset
 
@@ -239,7 +259,7 @@ In order to study the effect of training set size, we run cross-validated
  for all sample sizes.
  This leads us to conclude that for a well-shuffled data set, the size of
  the training set has little influence beyond a relatively small size of
- 2000 points.
+ 1000 points.
 \end_layout
 
 \begin_layout Section*
@@ -257,8 +277,15 @@ delayed
 non-delayed
 \emph default
  otherwise.
- Using the Weka machine learning toolkit, we first applied a naive-bayes
- algorithm with ten-fold cross-validation on the entire training set.
+ Using the Weka machine learning toolkit 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "weka"
+
+\end_inset
+
+, we first applied a naive-bayes algorithm with ten-fold cross-validation
+ on the entire training set.
  While extremely fast, the naive-bayes implementation (with Laplace smoothing)
  performs extremely poorly.
  We then use SVMs for classification, since it's known as the best out-of-the-bo
@@ -384,5 +411,48 @@ EM to estimate parameters
 \end_layout
 
 \end_deeper
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "dataset"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "2"
+key "wuapi"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "3"
+key "rlang"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "4"
+key "weka"
+
+\end_inset
+
+
+\end_layout
+
 \end_body
 \end_document
