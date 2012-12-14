@@ -1061,6 +1061,7 @@ right.
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename delay_dist_dens.png
+	display false
 	width 45text%
 
 \end_inset
@@ -1068,6 +1069,7 @@ right.
 
 \begin_inset Graphics
 	filename lm_pred_dist_dens.png
+	display false
 	width 45text%
 
 \end_inset
@@ -1175,6 +1177,7 @@ right.
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename glm_pred_dist_dens.png
+	display false
 	width 45text%
 
 \end_inset
@@ -1182,6 +1185,7 @@ right.
 
 \begin_inset Graphics
 	filename lwqr_pred_dist_dens.png
+	display false
 	width 45text%
 
 \end_inset
@@ -1234,6 +1238,17 @@ key "dataset"
 
 \end_inset
 
+American Statistics Association, Data Expo 2009, 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://stat-computing.org/dataexpo/2009/
+\end_layout
+
+\end_inset
+
 
 \end_layout
 
@@ -1242,6 +1257,17 @@ key "dataset"
 LatexCommand bibitem
 label "2"
 key "wuapi"
+
+\end_inset
+
+The Weather Underground API, 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.wunderground.com/weather/api/
+\end_layout
 
 \end_inset
 
@@ -1256,6 +1282,17 @@ key "rlang"
 
 \end_inset
 
+The R project for statistical computing, 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.r-project.org/
+\end_layout
+
+\end_inset
+
 
 \end_layout
 
@@ -1264,6 +1301,17 @@ key "rlang"
 LatexCommand bibitem
 label "4"
 key "weka"
+
+\end_inset
+
+Weka, 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.cs.waikato.ac.nz/ml/weka/
+\end_layout
 
 \end_inset
 
