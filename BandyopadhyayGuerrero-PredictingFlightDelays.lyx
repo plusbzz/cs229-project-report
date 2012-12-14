@@ -44,9 +44,9 @@
 \color #008000
 \end_index
 \leftmargin 2.5cm
-\topmargin 2.5cm
+\topmargin 3cm
 \rightmargin 2cm
-\bottommargin 2.5cm
+\bottommargin 3cm
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
@@ -138,7 +138,7 @@ One airline: AA (American Airlines), since it is the largest airline using
 \end_layout
 
 \begin_layout Standard
-This reduces the size of our data set to around 75,000 records.
+This reduces the size of our data set to around 80,000 records.
  For each record, we use secondary data sources to enrich it with information
  about airplanes and historical weather statistics.
  At the end of the pre-processing steps, our data set has the following
@@ -180,8 +180,8 @@ Preliminary analysis using Linear Regression
 \begin_layout Standard
 As our first pre-processing step, we use histograms and basic plots to eliminate
  some features that have no impact on the delays.
- These included features such as the airplane manufacturer and temperature.
- We then used linear regression (as implemented in R 
+ These include features such as the airplane manufacturer and temperature.
+ We then use linear regression (as implemented in R 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "rlang"
@@ -189,11 +189,11 @@ key "rlang"
 \end_inset
 
 ) as a quick-and-dirty first technique to examine the data.
- Our goal with linear regression was threefold: first, we use the regression
- parameters to identify prominent factors affecting delays.
+ Our goal with linear regression is threefold: first, we want to use the
+ regression parameters to identify prominent factors affecting delays.
  Second, we would like to get a baseline estimate of how accurately delays
  could be predicted.
- Third, we want to analyse how the prediction error changed with the size
+ Third, we want to analyse how the prediction error changes with the size
  of the training set.
 \end_layout
 
@@ -246,14 +246,14 @@ Linear regression coefficients for selected features
 \end_layout
 
 \begin_layout Standard
-The coefficients of the linear regression, as shown in Figure 
+The coefficients of the linear regression (Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Linear-regression-coefficients"
 
 \end_inset
 
-, give us a good idea of the relative importance of various features.
+) give us a good idea of the relative importance of various features.
  We observe that the features most correlated with delays are the flight
  departure times, followed by certain bad weather conditions.
  For example, flights departing during evening hours (around 8 pm) tend
@@ -262,7 +262,7 @@ reference "fig:Linear-regression-coefficients"
  correlation with delays.
  Somewhat surprisingly, the month has little effect on the delay.
  In fact, certain months (such as October) even show a small negative correlatio
-n, indicating that flights tend to be early in those months!
+n, indicating that flights tend to be early in those months.
 \end_layout
 
 \begin_layout Subsection*
@@ -303,7 +303,7 @@ key "weka"
 
 \end_inset
 
-, we first applied a Naive-Bayes algorithm with ten-fold cross-validation
+, we first apply a Naive-Bayes algorithm with ten-fold cross-validation
  on the entire training set.
  The Naive-Bayes algorithm runs extremely fast and provides some baseline
  results, as shown in Tables 
@@ -326,7 +326,8 @@ reference "tab:Performance-delayed"
 \begin_layout Standard
 The Naive-Bayes results show us that the classifer performance is far better
  in predicting non-delayed flights than delayed ones.
- This is not surprising, since our data set is extremely class-imbalanced.
+ The F-score on predicting on-time flights is 0.78, while that for delays
+ is only 0.566.
  So, how can we improve the performance of the classifier, particularly
  in predicting delays?
 \end_layout
@@ -360,6 +361,7 @@ Performance of classifiers in predicting non-delayed flights
 \end_layout
 
 \begin_layout Plain Layout
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="5">
 <features tabularvalignment="middle">
@@ -691,6 +693,7 @@ Performance of classifiers in predicting delayed flights
 \end_layout
 
 \begin_layout Plain Layout
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="5">
 <features tabularvalignment="middle">
@@ -994,14 +997,18 @@ Random Forests (unweighted)
 \end_layout
 
 \begin_layout Standard
-We try SVMs to improve the classification performance, since SVMs are reputed
- to be the best out-of-the-box classifer.
+We train an SVM, which are reputed to be the best out-of-the-box classifer.
  Our initial attempts at using the SVM (with a gaussian kernel) does not
  greatly improve performance.
  In fact, the SVM performs slightly worse than Naive-Bayes in predicting
- delays.
- In order to mitigate the effect of the skewed class distribution, we run
- the SVMs again, but this time setting a 10:1 cost penalty for delays i.e.
+ delays (F-score 0.538).
+ 
+\end_layout
+
+\begin_layout Standard
+Since it's more important, in our opinion, to predict a delay correctly
+ than an on-time flight, we run an SVM again, this time setting a 10:1 cost
+ penalty for delays i.e.
  predicting a false negative incurs 10 times the cost of a false positive.
  This step improves our classification result significantly for delays,
  pushing the F-score slightly above Naive-Bayes, but it adversely impacts
@@ -1026,8 +1033,16 @@ Why does linear regression perform so poorly? In order to investigate this
  We first plot the distributions of the actual and predicted departure delays
  and notice a very large discrepancy.
  While the distribution of predicted delays looks 'spread-out', the actual
- delays are drawn from an extremely skewed and narrow distribution.
+ delays are drawn from an extremely skewed and narrow distribution (Figure
  
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:LM"
+
+\end_inset
+
+).
+ This results in a high RMS error (37 minutes).
 \end_layout
 
 \begin_layout Standard
@@ -1044,6 +1059,12 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:LM"
+
+\end_inset
+
 Distribution of actual delays, 
 \emph on
 left
@@ -1092,9 +1113,9 @@ Our first thought is to use a GLM to model the delay distribution.
  delay distribution.
  In order to get this to work, we add a positive number to the delay, since
  the gamma distribution is only defined for non-negative numbers.
- However, when we try modeling the data with a GLM, our RMS error actually
- increases! This is because while the GLM models the peak of the delay distribut
-ion well, it fails to fit the tail, thereby performing poorly on large delays
+ However, when we use a GLM, our RMS error actually increases to 41 minutes.
+ This is because while the GLM models the peak of the delay distribution
+ well, it fails to fit the tail, thereby performing poorly on large delays
  (Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -1106,8 +1127,8 @@ reference "fig:GLM"
 \end_layout
 
 \begin_layout Standard
-Our next approach is to use a non-parametric regression model.
- The idea for using non-parametric techniques is based on some observations:
+Our next approach is to use a non-parametric regression model, based on
+ the following justification:
 \end_layout
 
 \begin_layout Enumerate
@@ -1126,8 +1147,7 @@ In real life, airplane delays often occur in 'clumps' i.e.
 \end_layout
 
 \begin_layout Standard
-A non-parametric regression would help meet these requirements.
- Since we have several features in our data set involving flight departure
+Since we have several features in our data set involving flight departure
  time (month, day, hour), flights closer in time to a given sample flight
  are more influential on the prediction for that sample.
  Also, the slow execution time of non-parametric regression can be mitigated,
@@ -1140,15 +1160,13 @@ Using a non-parametric regression implementation in R and cross-validation,
  we train several models on randomly constructed sample data sets and evaluate
  the best parameters for the model.
  We find that a locally weighted quadratic regression gives us the best
- results that we have attained so far.
+ results that we have attained so far in terms of modeling the delay distributio
+n.
+ However the RMS error decreases only slightly to 35 minutes.
 \begin_inset Float figure
 wide false
 sideways false
 status open
-
-\begin_layout Plain Layout
-
-\end_layout
 
 \begin_layout Plain Layout
 \begin_inset Caption
@@ -1193,17 +1211,13 @@ right.
 
 \end_layout
 
-\begin_layout Plain Layout
-
-\end_layout
-
 \end_inset
 
 
 \end_layout
 
 \begin_layout Section*
-Discussion
+Discussion and future work
 \end_layout
 
 \begin_layout Standard
@@ -1212,7 +1226,8 @@ We have had mixed success in attaining our three goals for this project.
  using a simple linear regression.
  For the second goal of predicting if a flight will be delayed, we have
  shown that overall, a simple Naive-Bayes does pretty well.
- A weighted SVM does a slightly better job in predicting delays.
+ A weighted SVM does a slightly better job in predicting delays, but takes
+ a much longer time to train.
  Our efforts have been least successful in estimating the delay magnitudes.
  While a non-parametric regression produces a distribution of predicted
  delays that is closer to the actual delay distribution, it still has a
@@ -1222,13 +1237,25 @@ We have had mixed success in attaining our three goals for this project.
 \begin_layout Standard
 Why is the data so resistant to prediction? In our opinion, the highly skewed
  distribution has an important effect on the algorithms.
- Most flights encounter no delays, regardless of the values of the features.
- This makes all the features in our data set extremely noisy.
- skewing predictions towards non-delays.
+ The distribution has two main characteristics, a very high peak around
+ 0, along with a long right tail.
+ All of the algorithms we have tried so far do very well on one of the two
+ characteristics at the expense of the other.
+ For example, the GLM gamma regression captures the peak but not the tail,
+ while the non-parametric regression captures the tail but not the peak.
+ As a result, each algorithm makes either a few big mistakes on larger delays,
+ or many small mistakes on smaller delays, thereby keeping the RMS error
+ high.
 \end_layout
 
-\begin_layout Section*
-Future work
+\begin_layout Standard
+So what should we try next? Based on our experience with this data set so
+ far, we would like to try a density estimation approach using a mixture
+ model.
+ Since each of our current models have difficulty modeling the tail or the
+ peak of the delay distribution, we would like to model the two characteristics
+ individually, estimate their parameters using EM and treat our data as
+ drawn from a mixture of the two models.
 \end_layout
 
 \begin_layout Bibliography
