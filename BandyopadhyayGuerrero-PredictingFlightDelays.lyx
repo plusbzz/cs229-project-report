@@ -88,9 +88,9 @@ In this project, we use publicly available data originally from the Bureau
  of Transportation Statistics to analyse and predict flight departure delays
  for a subset of commercial flights in the United States.
  We have three goals in mind.
- First, we would like to identify some factors which are most likely to
- cause flight delays.
- Second, we want to predict if there will be a delay for an individual flight.
+ First, we would like to identify the factors which are most likely to cause
+ flight delays.
+ Second, we want to predict whether an individual flight will be delayed.
  Finally, if there is a delay, we would like to estimate its magnitude.
 \end_layout
 
@@ -100,7 +100,7 @@ In this paper, we first describe the important features of the data, along
  As part of this step, we use linear regression to identify the most important
  factors affecting delays.
  Subsequently, we use a classifier (SVM) to predict if there will be a delay.
- For estimating the magnitude of delays, we use a non-parametric quadratic
+ To estimate the magnitude of delays, we use a non-parametric quadratic
  regression algorithm.
  
 \end_layout
@@ -179,8 +179,8 @@ Preliminary analysis using Linear Regression
 
 \begin_layout Standard
 As our first pre-processing step, we use histograms and basic plots to eliminate
- some features that have no impact on the delays.
- These include features such as the airplane manufacturer and temperature.
+ features that have no impact on the delays, such as the airplane manufacturer
+ and temperature.
  We then use linear regression (as implemented in R 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -192,7 +192,7 @@ key "rlang"
  Our goal with linear regression is threefold: first, we want to use the
  regression parameters to identify prominent factors affecting delays.
  Second, we would like to get a baseline estimate of how accurately delays
- could be predicted.
+ can be predicted.
  Third, we want to analyse how the prediction error changes with the size
  of the training set.
 \end_layout
@@ -258,8 +258,8 @@ reference "fig:Linear-regression-coefficients"
  departure times, followed by certain bad weather conditions.
  For example, flights departing during evening hours (around 8 pm) tend
  to have more delays.
- Also, adverse weather conditions such as snow or thunderstorms show a high
- correlation with delays.
+ Also, adverse weather conditions such as snow, thunderstorms, rain, sleet
+ or fog show a high correlation with delays.
  Somewhat surprisingly, the month has little effect on the delay.
  In fact, certain months (such as October) even show a small negative correlatio
 n, indicating that flights tend to be early in those months.
@@ -610,7 +610,7 @@ Random Forests (unweighted)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Random Forests (unweighted)
+Random Forests (weighted)
 \end_layout
 
 \end_inset
@@ -942,7 +942,7 @@ Random Forests (unweighted)
 \begin_inset Text
 
 \begin_layout Plain Layout
-Random Forests (unweighted)
+Random Forests (weighted)
 \end_layout
 
 \end_inset
@@ -997,7 +997,7 @@ Random Forests (unweighted)
 \end_layout
 
 \begin_layout Standard
-We train an SVM, which are reputed to be the best out-of-the-box classifer.
+We train an SVM, which is reputed to be the best out-of-the-box classifer.
  Our initial attempts at using the SVM (with a gaussian kernel) does not
  greatly improve performance.
  In fact, the SVM performs slightly worse than Naive-Bayes in predicting
@@ -1008,15 +1008,24 @@ We train an SVM, which are reputed to be the best out-of-the-box classifer.
 \begin_layout Standard
 Since it's more important, in our opinion, to predict a delay correctly
  than an on-time flight, we run an SVM again, this time setting a 10:1 cost
- penalty for delays i.e.
- predicting a false negative incurs 10 times the cost of a false positive.
+ penalty for delays.
+ That is, predicting a false negative incurs 10 times the cost of a false
+ positive.
  This step improves our classification result significantly for delays,
  pushing the F-score slightly above Naive-Bayes, but it adversely impacts
  the classification of on-time flights.
 \end_layout
 
 \begin_layout Standard
-As a digression, we also show some classification results with random forests.
+As a digression, we also show some classification results with random forests
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rf"
+
+\end_inset
+
+.
  While they perform worse in general than Naive-Bayes and SVMs, running
  random forests with a weighted penalty improves classification on delays
  without significantly hurting that on non-delayed flights.
@@ -1132,11 +1141,11 @@ Our next approach is to use a non-parametric regression model, based on
 \end_layout
 
 \begin_layout Enumerate
-We need a way to model the skewness of the distribution
+We need a way to model the skewness of the distribution.
 \end_layout
 
 \begin_layout Enumerate
-Small training sets do as well as large ones
+Small training sets do as well as large ones.
 \end_layout
 
 \begin_layout Enumerate
@@ -1217,15 +1226,15 @@ right.
 \end_layout
 
 \begin_layout Section*
-Discussion and future work
+Discussion
 \end_layout
 
 \begin_layout Standard
 We have had mixed success in attaining our three goals for this project.
  We have achieved the first goal of identifying factors that influence delays
  using a simple linear regression.
- For the second goal of predicting if a flight will be delayed, we have
- shown that overall, a simple Naive-Bayes does pretty well.
+ For the second goal of predicting whether a flight will be delayed, we
+ have shown that overall, a simple Naive-Bayes does pretty well.
  A weighted SVM does a slightly better job in predicting delays, but takes
  a much longer time to train.
  Our efforts have been least successful in estimating the delay magnitudes.
@@ -1237,10 +1246,10 @@ We have had mixed success in attaining our three goals for this project.
 \begin_layout Standard
 Why is the data so resistant to prediction? In our opinion, the highly skewed
  distribution has an important effect on the algorithms.
- The distribution has two main characteristics, a very high peak around
- 0, along with a long right tail.
- All of the algorithms we have tried so far do very well on one of the two
- characteristics at the expense of the other.
+ The distribution has two main characteristics: 1) a very high peak around
+ zero and 2) a long right tail.
+ All of the algorithms we tried so far do very well on one of the two characteri
+stics at the expense of the other.
  For example, the GLM gamma regression captures the peak but not the tail,
  while the non-parametric regression captures the tail but not the peak.
  As a result, each algorithm makes either a few big mistakes on larger delays,
@@ -1248,14 +1257,22 @@ Why is the data so resistant to prediction? In our opinion, the highly skewed
  high.
 \end_layout
 
+\begin_layout Subsection*
+Future work: using a mixture model
+\end_layout
+
 \begin_layout Standard
-So what should we try next? Based on our experience with this data set so
- far, we would like to try a density estimation approach using a mixture
- model.
- Since each of our current models have difficulty modeling the tail or the
- peak of the delay distribution, we would like to model the two characteristics
- individually, estimate their parameters using EM and treat our data as
- drawn from a mixture of the two models.
+Based on our experience with this data set so far, we would like to try
+ a density estimation approach.
+ Since each of our current models have difficulty modeling either the tail
+ or the peak of the delay distribution, we would develop one model for the
+ peak (small delays) and another for the tail (long delays).
+ This is analogous to using a mixture of gaussians, but our models would
+ not necessarily be gaussian.
+ Assuming that our data is drawn from this mixture model, we would estimate
+ the parameters governing the individual components using an Expectation
+ Maximization (EM) approach .
+ 
 \end_layout
 
 \begin_layout Bibliography
@@ -1338,6 +1355,28 @@ status collapsed
 \begin_layout Plain Layout
 
 http://www.cs.waikato.ac.nz/ml/weka/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "5"
+key "rf"
+
+\end_inset
+
+ Random Forests, 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm
 \end_layout
 
 \end_inset
